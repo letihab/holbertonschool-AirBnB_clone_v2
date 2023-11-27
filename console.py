@@ -40,8 +40,9 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, arg):
-        """Create an instance of a class and print its ID"""
+        """Create an object of any class"""
         args_list = shlex.split(arg)
+
         if len(args_list) == 0:
             print("** class name missing **")
         else:
@@ -50,43 +51,51 @@ class HBNBCommand(cmd.Cmd):
                 print("** class doesn't exist **")
             else:
                 obj_class = HBNBCommand.class_dict[class_name]
-                """Extract parameters from the command"""
-                parameters_list = args_list[1:]
-                parametres_dict = {}
 
-                """Split parameters into key/value pairs"""
-                for parametres in parameters_list:
-                    key_value = parametres.split('=')
+                # Create a new instance
+                obj = obj_class()
+
+                # Extract parameters from the command
+                parameters_list = args_list[1:]
+
+                # Use of the parameters
+                for parameter in parameters_list:
+                    key_value = parameter.split('=')
                     if len(key_value) == 2:
                         key, value = key_value
 
-                        """Handle the "created_at" and "updated_at" values"""
+                        # Handle special cases for "created_at" and
+                        # "updated_at"
                         if key in ["created_at", "updated_at"]:
                             value = BaseModel.parse_datetime(value)
 
-                        """Value based on the type"""
-                        if key in ["created_at",
-                                   "updated_at"] or key not in ["created_at",
-                                                                "updated_at"]:
+                        # Handle value based on type
+                        if key in ["created_at", "updated_at"] or key not in [
+                            "created_at", "updated_at"]:
                             if value.startswith('"') and value.endswith('"'):
-                                """The value is a string"""
+                                # The value is a string
                                 value = value[1:-1].replace('_', ' ').replace(
                                     '\\"', '"')
                             elif '.' in value:
                                 try:
+                                    # The value is a float
                                     value = float(value)
                                 except ValueError:
                                     continue
                             elif value.isdigit():
+                                # The value is an integer
                                 value = int(value)
                             else:
                                 continue
-                            parametres_dict[key] = value
 
-                obj = obj_class(**parametres_dict)
+                            # sets value to the specified attribute of
+                            # the specified object
+                            setattr(obj, key, value)
+
                 storage.new(obj)
                 storage.save()
                 print(obj.id)
+
 
     def do_show(self, arg):
         """Show an instance"""
