@@ -5,7 +5,11 @@
 import uuid
 from datetime import datetime
 import models
+from sqlalchemy import Column, Integer, String, DateTime, func
+from sqlalchemy.ext.declarative import declarative_base
 
+
+Base = declarative_base()
 
 class BaseModel:
     """class BaseModel that defines all common attributes/methods
@@ -14,15 +18,16 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """initializes an instance of BaseModel"""
         if len(kwargs) < 1:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
+            self.id = Column(String(60), nullable=False, primary_key=True)
+            self.created_at = Column(DateTime, default=func.utcnow(),
+                                     nullable=False)
+            self.updated_at = Column(DateTime, default=func.utcnow(),
+                                     nullable=False)
         else:
-            self.id = kwargs.get("id", str(uuid.uuid4()))
-            self.created_at = datetime.fromisoformat(kwargs.get("created_at"))
-            self.updated_at = datetime.fromisoformat(kwargs.get("updated_at"))
-
-        models.storage.new(self)
+            for key, value in kwargs.items():
+                if key == "created_at" or key == "updated_at":
+                    value = datetime.fromisoformat(value)
+                setattr(self, key, value)
 
     def __str__(self):
         """prints a representation od the instance"""
@@ -34,8 +39,8 @@ class BaseModel:
         current datetime"""
 
         self.updated_at = datetime.now()
-        models.storage.save()
         models.storage.new(self)
+        models.storage.save()
 
     def to_dict(self):
         """returns a dictionary containing all keys/values of __dict__ of
@@ -45,6 +50,7 @@ class BaseModel:
         obj_dict['__class__'] = self.__class__.__name__
         obj_dict['created_at'] = self.created_at.isoformat()
         obj_dict['updated_at'] = self.updated_at.isoformat()
+        obj_dict.pop('_sa_instance_state', None)
         return obj_dict
 
     @classmethod
@@ -69,3 +75,7 @@ class BaseModel:
                 raise ValueError("Invalid '__class__' in the dictionary")
         else:
             raise ValueError("No '__class__' key found in the dictionary")
+
+    def delete(self):
+        """Delete the current instance from the file_storage."""
+        models.file_storage.delete(self)
