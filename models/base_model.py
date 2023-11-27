@@ -69,11 +69,3 @@ class BaseModel:
                 raise ValueError("Invalid '__class__' in the dictionary")
         else:
             raise ValueError("No '__class__' key found in the dictionary")
-
-    @staticmethod
-    def parse_datetime(value):
-        """Parse the datetime value from a string or return the original
-        datetime object"""
-        if isinstance(value, str):
-            return datetime.fromisoformat(value)
-        return value
