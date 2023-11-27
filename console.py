@@ -49,7 +49,41 @@ class HBNBCommand(cmd.Cmd):
             if class_name not in HBNBCommand.class_dict:
                 print("** class doesn't exist **")
             else:
-                obj = HBNBCommand.class_dict[class_name]()
+                obj_class = HBNBCommand.class_dict[class_name]
+                """Extract parameters from the command"""
+                parameters_list = args_list[1:]
+                parametres_dict = {}
+
+                """Split parameters into key/value pairs"""
+                for parametres in parameters_list:
+                    key_value = parametres.split('=')
+                    if len(key_value) == 2:
+                        key, value = key_value
+
+                        """Handle the "created_at" and "updated_at" values"""
+                        if key in ["created_at", "updated_at"]:
+                            value = BaseModel.parse_datetime(value)
+
+                        """Value based on the type"""
+                        if key in ["created_at",
+                                   "updated_at"] or key not in ["created_at",
+                                                                "updated_at"]:
+                            if value.startswith('"') and value.endswith('"'):
+                                """The value is a string"""
+                                value = value[1:-1].replace('_', ' ').replace(
+                                    '\\"', '"')
+                            elif '.' in value:
+                                try:
+                                    value = float(value)
+                                except ValueError:
+                                    continue
+                            elif value.isdigit():
+                                value = int(value)
+                            else:
+                                continue
+                            parametres_dict[key] = value
+
+                obj = obj_class(**parametres_dict)
                 storage.new(obj)
                 storage.save()
                 print(obj.id)

@@ -59,9 +59,9 @@ class BaseModel:
                     if key == "id":
                         setattr(instance, key, value)
                     elif key == "created_at":
-                        setattr(instance, key, datetime.fromisoformat(value))
+                        setattr(instance, key, cls.parse_datetime(value))
                     elif key == "updated_at":
-                        setattr(instance, key, datetime.fromisoformat(value))
+                        setattr(instance, key, cls.parse_datetime(value))
                     elif key != '__class__':
                         setattr(instance, key, value)
                 return instance
@@ -69,3 +69,11 @@ class BaseModel:
                 raise ValueError("Invalid '__class__' in the dictionary")
         else:
             raise ValueError("No '__class__' key found in the dictionary")
+
+    @staticmethod
+    def parse_datetime(value):
+        """Parse the datetime value from a string or return the original
+        datetime object"""
+        if isinstance(value, str):
+            return datetime.fromisoformat(value)
+        return value
