@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """Contains the entry point of the command interpreter"""
 
-
 import cmd
 import shlex
 from datetime import datetime
@@ -39,59 +38,58 @@ class HBNBCommand(cmd.Cmd):
         """Skip empty line"""
         pass
 
-
     def do_create(self, arg):
         """Create an object of any class"""
         args_list = shlex.split(arg)
 
-    if len(args_list) == 0:
-        print("** class name missing **")
-    else:
-        class_name = args_list[0]
-        if class_name not in HBNBCommand.class_dict:
-            print("** class doesn't exist **")
+        if len(args_list) == 0:
+            print("** class name missing **")
         else:
-            obj_class = HBNBCommand.class_dict[class_name]
+            class_name = args_list[0]
+            if class_name not in HBNBCommand.class_dict:
+                print("** class doesn't exist **")
+            else:
+                obj_class = HBNBCommand.class_dict[class_name]
 
-            # Create a new instance
-            obj = obj_class()
+                # Create a new instance
+                obj = obj_class()
 
-            # Extract parameters from the command
-            parameters_list = args_list[1:]
+                # Extract parameters from the command
+                parameters_list = args_list[1:]
 
-            # Use of the parameters
-            for parameter in parameters_list:
-                key_value = parameter.split("=")
-                if len(key_value) != 2:
-                    continue
-
-                key, value = key_value
-                if not key or not value:
-                    continue
-
-                # Handle special cases for "created_at" and "updated_at"
-                if key in ["created_at", "updated_at"]:
-                    value = BaseModel.parse_datetime(value)
-                else:
-                    # Handle value based on the specified syntax
-                    if value.startswith('"') and value.endswith('"'):
-                        value = value[1:-1].replace("_", " ").replace('\\"', '"')
-                    elif "." in value:
-                        try:
-                            value = float(value)
-                        except ValueError:
-                            continue
-                    elif value.isdigit():
-                        value = int(value)
-                    else:
+                # Use of the parameters
+                for parameter in parameters_list:
+                    key_value = parameter.split("=")
+                    if len(key_value) != 2:
                         continue
 
-                # sets value to the specified attribute of the specified object
-                setattr(obj, key, value)
+                    key, value = key_value
+                    if not key or not value:
+                        continue
 
-            storage.new(obj)
-            storage.save()
-            print(obj.id)
+                    # Handle special cases for "created_at" and "updated_at"
+                    if key in ["created_at", "updated_at"]:
+                        value = BaseModel.parse_datetime(value)
+                    else:
+                        # Handle value based on the specified syntax
+                        if value.startswith('"') and value.endswith('"'):
+                            value = value[1:-1].replace("_", " ").replace('\\"', '"')
+                        elif "." in value:
+                            try:
+                                value = float(value)
+                            except ValueError:
+                                continue
+                        elif value.isdigit():
+                            value = int(value)
+                        else:
+                            continue
+
+                    # sets value to the specified attribute of the specified object
+                    setattr(obj, key, value)
+
+                storage.new(obj)
+                storage.save()
+                print(obj.id)
 
     def do_show(self, arg):
         """Show an instance"""
