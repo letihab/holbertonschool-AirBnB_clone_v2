@@ -17,17 +17,21 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """initializes an instance of BaseModel"""
-        if len(kwargs) < 1:
-            self.id = Column(String(60), nullable=False, primary_key=True)
-            self.created_at = Column(DateTime, default=func.utcnow(),
-                                     nullable=False)
-            self.updated_at = Column(DateTime, default=func.utcnow(),
-                                     nullable=False)
-        else:
+        if kwargs:
             for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
-                    value = datetime.fromisoformat(value)
-                setattr(self, key, value)
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                if key != "__class__":
+                    setattr(self, key, value)
+            if "id" not in kwargs:
+                self.id = str(uuid.uuid4())
+            if "created_at" not in kwargs:
+                self.created_at = datetime.now()
+            if "updated_at" not in kwargs:
+                self.updated_at = datetime.now()
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = self.updated_at = datetime.now()
 
     def __str__(self):
         """prints a representation od the instance"""
