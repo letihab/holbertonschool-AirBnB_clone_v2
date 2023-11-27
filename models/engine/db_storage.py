@@ -15,23 +15,17 @@ class DBStorage:
     __engine = None
     __session = None
     def __init__(self):
-        # Récupération des informations à partir des variables d'environnement
-        user = os.getenv("HBNB_MYSQL_USER")
-        password = os.getenv("HBNB_MYSQL_PWD")
-        host = os.getenv("HBNB_MYSQL_HOST", "localhost")
-        # Si la variable d'environnement n'est pas définie, utilisez localhost
-        db = os.getenv("HBNB_MYSQL_DB")
-        # Construction de l'URL de la base de données
-        db_url = f"mysql+mysqldb://{user}:{password}@{host}/{db}"
-        # Création du moteur SQLAlchemy
-        self.__engine = create_engine(db_url, pool_pre_ping=True)
-        # Création d'une session
-        Session = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
-        self.__session = Session()
-        # Si HBNB_ENV est égal à "test", supprimez et recréez toutes les tables
-        if os.getenv("HBNB_ENV") == "test":
+        user = getenv("HBNB_MYSQL_USER")
+        passwd = getenv("HBNB_MYSQL_PWD")
+        db = getenv("HBNB_MYSQL_DB")
+        host = getenv("HBNB_MYSQL_HOST")
+        env = getenv("HBNB_ENV")
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
+                                      .format(user, passwd, host, db),
+                                      pool_pre_ping=True)
+        if env == "test":
             Base.metadata.drop_all(self.__engine)
-            Base.metadata.create_all(self.__engine)
+
     def all(self, cls=None):
         type_dict = {}
         query_classes = [User, State, City, Amenity, Place, Review]
@@ -58,4 +52,3 @@ class DBStorage:
         Sec = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(Sec)
         self.__session = Session()
-
