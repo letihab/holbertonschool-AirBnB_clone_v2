@@ -91,3 +91,5 @@ class TestBaseModel(unittest.TestCase):
 Solomon William
 &
 Nadège Tettelin
+&
+Leticia Habib
