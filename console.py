@@ -38,9 +38,9 @@ class HBNBCommand(cmd.Cmd):
         """Skip empty line"""
         pass
 
-    def do_create(self, arg):
+    """def do_create(self, arg):"""
         """Create an object of any class"""
-        args_list = shlex.split(arg)
+        """args_list = shlex.split(arg)
 
         if len(args_list) == 0:
             print("** class name missing **")
@@ -89,7 +89,49 @@ class HBNBCommand(cmd.Cmd):
 
                 storage.new(obj)
                 storage.save()
-                print(obj.id)
+                print(obj.id)"""
+    def do_create(self, arg):
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+
+        class_name = args[0]
+        if class_name not in self.class_dict:
+            print("** class doesn't exist **")
+            return
+
+        if len(args) == 1:
+            print("** instance attributes missing **")
+            return
+
+        args = args[1:]
+        attributes = {}
+        for argument in args:
+            parts = argument.split('=')
+            if len(parts) != 2:
+                continue
+            key, val = parts
+            # Replace underscores with spaces and handle quotes
+            val = val.replace('_', ' ').replace('\\"', '"')
+            # Convert to appropriate types: int, float, or string
+            if val[0] == '"' and val[-1] == '"':
+                val = val[1:-1]
+            else:
+                try:
+                    if '.' in val:
+                        val = float(val)
+                    else:
+                        val = int(val)
+                except ValueError:
+                    continue
+            attributes[key] = val
+
+        # Create an instance with given attributes
+        new_instance = self.class_dict[class_name](**attributes)
+        new_instance.save()
+        print(new_instance.id)
+
 
     def do_show(self, arg):
         """Show an instance"""
