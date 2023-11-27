@@ -24,7 +24,7 @@ class HBNBCommand(cmd.Cmd):
         "City": City,
         "Amenity": Amenity,
         "Place": Place,
-        "Review": Review
+        "Review": Review,
     }
 
     def do_quit(self, arg):
@@ -39,63 +39,59 @@ class HBNBCommand(cmd.Cmd):
         """Skip empty line"""
         pass
 
+
     def do_create(self, arg):
         """Create an object of any class"""
         args_list = shlex.split(arg)
 
-        if len(args_list) == 0:
-            print("** class name missing **")
+    if len(args_list) == 0:
+        print("** class name missing **")
+    else:
+        class_name = args_list[0]
+        if class_name not in HBNBCommand.class_dict:
+            print("** class doesn't exist **")
         else:
-            class_name = args_list[0]
-            if class_name not in HBNBCommand.class_dict:
-                print("** class doesn't exist **")
-            else:
-                obj_class = HBNBCommand.class_dict[class_name]
+            obj_class = HBNBCommand.class_dict[class_name]
 
-                # Create a new instance
-                obj = obj_class()
+            # Create a new instance
+            obj = obj_class()
 
-                # Extract parameters from the command
-                parameters_list = args_list[1:]
+            # Extract parameters from the command
+            parameters_list = args_list[1:]
 
-                # Use of the parameters
-                for parameter in parameters_list:
-                    key_value = parameter.split('=')
-                    if len(key_value) == 2:
-                        key, value = key_value
+            # Use of the parameters
+            for parameter in parameters_list:
+                key_value = parameter.split("=")
+                if len(key_value) != 2:
+                    continue
 
-                        # Handle special cases for "created_at" and
-                        # "updated_at"
-                        if key in ["created_at", "updated_at"]:
-                            value = BaseModel.parse_datetime(value)
+                key, value = key_value
+                if not key or not value:
+                    continue
 
-                        # Handle value based on type
-                        if key in ["created_at", "updated_at"] or key not in [
-                            "created_at", "updated_at"]:
-                            if value.startswith('"') and value.endswith('"'):
-                                # The value is a string
-                                value = value[1:-1].replace('_', ' ').replace(
-                                    '\\"', '"')
-                            elif '.' in value:
-                                try:
-                                    # The value is a float
-                                    value = float(value)
-                                except ValueError:
-                                    continue
-                            elif value.isdigit():
-                                # The value is an integer
-                                value = int(value)
-                            else:
-                                continue
+                # Handle special cases for "created_at" and "updated_at"
+                if key in ["created_at", "updated_at"]:
+                    value = BaseModel.parse_datetime(value)
+                else:
+                    # Handle value based on the specified syntax
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1].replace("_", " ").replace('\\"', '"')
+                    elif "." in value:
+                        try:
+                            value = float(value)
+                        except ValueError:
+                            continue
+                    elif value.isdigit():
+                        value = int(value)
+                    else:
+                        continue
 
-                            # sets value to the specified attribute of
-                            # the specified object
-                            setattr(obj, key, value)
+                # sets value to the specified attribute of the specified object
+                setattr(obj, key, value)
 
-                storage.new(obj)
-                storage.save()
-                print(obj.id)
-
+            storage.new(obj)
+            storage.save()
+            print(obj.id)
 
     def do_show(self, arg):
         """Show an instance"""
@@ -192,5 +188,5 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     HBNBCommand().cmdloop()
