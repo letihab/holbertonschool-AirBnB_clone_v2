@@ -9,7 +9,7 @@ class State(BaseModel, Base):
     __tablename__ = 'states'
     id = Column(String(60), primary_key=True, nullable=False)
     name = Column(String(128), nullable=False)
-    cities_relation = relationship("City", cascade="all, delete", backref="state")
+    cities = relationship('City', backref='state', cascade='all, delete-orphan')
 
     @property
     def cities(self):
