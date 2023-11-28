@@ -40,13 +40,17 @@ class DBStorage:
                 key = "{}.{}".format(query_class.__name__, obj.id)
                 type_dict[key] = obj
         return type_dict
+
     def new(self, obj):
         self.__session.add(obj)
+
     def save(self):
         self.__session.commit()
+
     def delete(self, obj=None):
         if obj:
             self.__session.delete(obj)
+
     def reload(self):
         Base.metadata.create_all(self.__engine)
         Sec = sessionmaker(bind=self.__engine, expire_on_commit=False)
