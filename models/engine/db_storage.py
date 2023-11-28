@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """create New engine"""
 
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from models.base_model import BaseModel, Base
@@ -10,10 +11,13 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-import os
+from os import getenv
+
+
 class DBStorage:
     __engine = None
     __session = None
+
     def __init__(self):
         user = getenv("HBNB_MYSQL_USER")
         passwd = getenv("HBNB_MYSQL_PWD")

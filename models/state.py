@@ -5,7 +5,9 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
-import os
+from city import City
+
+
 class State(BaseModel, Base):
     __tablename__ = 'states'
     id = Column(String(60), primary_key=True, nullable=False)
