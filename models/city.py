@@ -2,7 +2,7 @@
 """class City that inherits from BaseModel"""
 
 
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
