@@ -5,12 +5,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from models.base_model import BaseModel, Base
-from models.user import User
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
 from os import getenv
 
 
@@ -38,19 +32,38 @@ class DBStorage:
         self.__session = Session()
 
     def all(self, cls=None):
-        """All method"""
+        """Return a dictionary"""
+        from models.state import State
+        from models.city import City
+        from models.user import User
+        from models.place import Place
+        from models.review import Review
+        from models.amenity import Amenity
+        from models.base_model import Base
+
+        tables = {
+            'users': User,
+            'places': Place,
+            'states': State,
+            'cities': City,
+            'amenities': Amenity,
+            'reviews': Review
+        }
+
         type_dict = {}
-        query_classes = [User, State, City, Amenity, Place, Review]
+
         if cls:
-            if cls in query_classes:
-                query_classes = [cls]
+            if cls in tables.values():
+                tables = {key: value for key, value in tables.items() if value == cls}
             else:
                 raise ValueError("Classe invalide: {}".format(cls))
-        for query_class in query_classes:
+
+        for table_name, query_class in tables.items():
             objects = self.__session.query(query_class).all()
             for obj in objects:
                 key = "{}.{}".format(query_class.__name__, obj.id)
                 type_dict[key] = obj
+
         return type_dict
 
     def new(self, obj):
