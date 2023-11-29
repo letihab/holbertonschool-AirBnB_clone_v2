@@ -52,17 +52,14 @@ class DBStorage:
 
         type_dict = {}
 
-        if cls:
-            if cls in tables.values():
-                tables = {key: value for key, value in tables.items() if value == cls}
-            else:
-                raise ValueError("Classe invalide: {}".format(cls))
-
-        for table_name, query_class in tables.items():
-            objects = self.__session.query(query_class).all()
-            for obj in objects:
-                key = "{}.{}".format(query_class.__name__, obj.id)
-                type_dict[key] = obj
+        if cls is None:
+            for classes in tables.values():
+                for row in self.__session.query(classes).all():
+                    type_dict['{}.{}'
+                                .format(classes.__name__, row.id)] = row
+        else:
+            for row in self.__session.query(cls):
+                type_dict['{}.{}'.format(cls.__name__, row.id)] = row
 
         return type_dict
 
