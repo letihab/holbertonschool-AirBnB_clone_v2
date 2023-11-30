@@ -64,5 +64,5 @@ class FileStorage:
                 self.__objects.pop(key, None)
 
     def close(self):
-               """update object"""
-               self.reload()
+        """update object"""
+        self.reload()
