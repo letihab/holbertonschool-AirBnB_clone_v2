@@ -4,6 +4,8 @@
 
 from tests.test_models.test_base_model import test_basemodel
 from models.review import Review
+from models.user import User
+from models.place import Place
 from models.base_model import BaseModel
 from models import storage
 import os
@@ -119,3 +121,24 @@ class test_review(test_basemodel):
         self.assertEqual(obj_dict['__class__'], 'Review')
         self.assertTrue('created_at' in obj_dict)
         self.assertTrue('updated_at' in obj_dict)
+
+    #--New unittests--#
+
+    def test_text(self):
+        """ """
+        new = Review()
+        self.assertEqual(type(new.text), str)
+
+    def test_review_attributes(self):
+        review = Review()
+        self.assertEqual(review.place_id, "")
+        self.assertEqual(review.user_id, "")
+        self.assertEqual(review.text, "")
+
+    def test_review_relationships(self):
+        # Test relationships between Review, User, and Place
+        user = User(email="test@example.com", password="password")
+        place = Place(name="Cozy House", user=user)
+        review = Review(text="Great place!", user=user, place=place)
+        self.assertEqual(review.user, user)
+        self.assertEqual(review.place, place)

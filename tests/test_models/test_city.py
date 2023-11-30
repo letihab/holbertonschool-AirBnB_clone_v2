@@ -4,6 +4,7 @@
 
 from tests.test_models.test_base_model import test_basemodel
 from models.city import City
+from models.state import State
 from models import storage
 from models.base_model import BaseModel
 import os
@@ -111,3 +112,21 @@ class test_City(test_basemodel):
         self.assertEqual(obj_dict['__class__'], 'City')
         self.assertTrue('created_at' in obj_dict)
         self.assertTrue('updated_at' in obj_dict)
+
+    #--New Unittests--#
+
+    def test_name(self):
+        """ """
+        new = City()
+        self.assertEqual(type(new.name), str)
+
+    def test_city_attributes(self):
+        city = City()
+        self.assertEqual(city.state_id, "")
+        self.assertEqual(city.name, "")
+
+    def test_city_state_relationship(self):
+        # Test the relationship between City and State
+        state = State(name="New York")
+        city = City(name="Albany", state=state)
+        self.assertEqual(city.state, state)
