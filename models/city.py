@@ -8,13 +8,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 
-Base = declarative_base()
-
 class City(BaseModel, Base):
+    """Class city"""
     __tablename__ = 'cities'
 
-    id = Column(String(60), primary_key=True, nullable=False)
     name = Column(String(128), nullable=False)
-    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
-
-    places = relationship('Place', backref='cities', cascade='all, delete-orphan')
+    state_id = Column(String(60), ForeignKey('states.id', ondelete="CASCADE")
+                      , nullable=False)

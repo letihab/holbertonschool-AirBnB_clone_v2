@@ -3,20 +3,27 @@
 
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
+from models.city import City
 from sqlalchemy.orm import relationship
-import os
-class State(BaseModel, Base):
-    __tablename__ = 'states'
-    id = Column(String(60), primary_key=True, nullable=False)
-    name = Column(String(128), nullable=False)
-    cities = relationship('City', backref='state', cascade='all, delete-orphan')
+from os import getenv
 
-    @property
-    def cities(self):
-        from models.city import City
-        from models import storage
-        city_list = []
-        for city in storage.all(City).values():
-            if city.state_id == self.id:
-                city_list.append(city)
-        return city_list
+
+class State(BaseModel, Base):
+    """Attributes states"""
+
+    __tablename__ = 'states'
+    name = Column(String(128), nullable=False)
+
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        cities = relationship('City', backref='state',
+                              cascade='all, delete-orphan')
+    else:
+        @property
+        def cities(self):
+            """return list cities"""
+            from models import storage
+            city_list = []
+            for city in storage.all(City).values():
+                if city.state_id == self.id:
+                    city_list.append(city)
+            return city_list
