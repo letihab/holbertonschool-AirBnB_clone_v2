@@ -21,70 +21,45 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        if kwargs:
-            for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                if key != "__class__":
-                    setattr(self, key, value)
-            if "id" not in kwargs:
-                self.id = str(uuid.uuid4())
-            if "created_at" not in kwargs:
-                self.created_at = datetime.now()
-            if "updated_at" not in kwargs:
-                self.updated_at = datetime.now()
-        else:
+        if not kwargs:
+            from models import storage
             self.id = str(uuid.uuid4())
-            self.created_at = self.updated_at = datetime.now()
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            storage.new(self)
+        else:
+            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
+                                                     '%Y-%m-%dT%H:%M:%S.%f')
+            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
+                                                     '%Y-%m-%dT%H:%M:%S.%f')
+            del kwargs['__class__']
+            self.__dict__.update(kwargs)
 
     def __str__(self):
-        """prints a representation od the instance"""
-        class_name = self.__class__.__name__
-        return ("[{}] ({}) {}".format(class_name, self.id, self.__dict__))
+        """Returns a string representation of the instance"""
+        cls = (str(type(self)).split('.')[-1]).split('\'')[0]
+        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
 
     def save(self):
-        """updates the public instance attribute updated_at with the
-        current datetime"""
-
+        """Updates updated_at with current time when instance is changed"""
+        from models import storage
         self.updated_at = datetime.now()
-        models.storage.new(self)
-        models.storage.save()
+        storage.new(self)
+        storage.save()
 
     def to_dict(self):
         """Convert instance into dict format"""
         dictionary = {}
         dictionary.update(self.__dict__)
-        dictionary.update({"__class__":
-                          (str(type(self)).split(".")[-1]).split("'")[0]})
-        dictionary["created_at"] = self.created_at.isoformat()
-        dictionary["updated_at"] = self.updated_at.isoformat()
-        if "_sa_instance_state" in dictionary.keys():
-            dictionary.pop("_sa_instance_state")
+        dictionary.update({'__class__':
+                          (str(type(self)).split('.')[-1]).split('\'')[0]})
+        dictionary['created_at'] = self.created_at.isoformat()
+        dictionary['updated_at'] = self.updated_at.isoformat()
+        if '_sa_instance_state' in dictionary.keys():
+            dictionary.pop('_sa_instance_state')
         return dictionary
-
-    @classmethod
-    def from_dict(cls, obj_dict):
-        """Create a new instance of the class and initialize it from the
-        dictionary"""
-        if '__class__' in obj_dict:
-            class_name = obj_dict['__class__']
-            if class_name == cls.__name__:
-                instance = cls()
-                for key, value in obj_dict.items():
-                    if key == "id":
-                        setattr(instance, key, value)
-                    elif key == "created_at":
-                        setattr(instance, key, cls.parse_datetime(value))
-                    elif key == "updated_at":
-                        setattr(instance, key, cls.parse_datetime(value))
-                    elif key != '__class__':
-                        setattr(instance, key, value)
-                return instance
-            else:
-                raise ValueError("Invalid '__class__' in the dictionary")
-        else:
-            raise ValueError("No '__class__' key found in the dictionary")
 
     def delete(self):
         """Delete the current instance from the file_storage."""
-        models.file_storage.delete(self)
+        from models import storage
+        storage.delete(self)
