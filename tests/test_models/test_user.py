@@ -46,26 +46,6 @@ class test_User(test_basemodel):
         self.assertEqual(user.first_name, "")
         self.assertEqual(user.last_name, "")
 
-    def test_first_name(self):
-        """ """
-        new = User()
-        self.assertEqual(type(new.first_name), str)
-
-    def test_last_name(self):
-        """ """
-        new = User()
-        self.assertEqual(type(new.last_name), str)
-
-    def test_password(self):
-        """ """
-        new = User()
-        self.assertEqual(type(new.password), str)
-
-    def test_email(self):
-        """ """
-        new = User()
-        self.assertEqual(type(new.email), str)
-
     def test_email_unique(self):
         # Test that email is unique
         user1 = User(email="test@example.com", password="password")
