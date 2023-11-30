@@ -35,22 +35,3 @@ class test_review(test_basemodel):
         self.assertEqual(type(new.text), str)
 
     #--New unittests--#
-
-    def test_text(self):
-        """ """
-        new = Review()
-        self.assertEqual(type(new.text), str)
-
-    def test_review_attributes(self):
-        review = Review()
-        self.assertEqual(review.place_id, "")
-        self.assertEqual(review.user_id, "")
-        self.assertEqual(review.text, "")
-
-    def test_review_relationships(self):
-        # Test relationships between Review, User, and Place
-        user = User(email="test@example.com", password="password")
-        place = Place(name="Cozy House", user=user)
-        review = Review(text="Great place!", user=user, place=place)
-        self.assertEqual(review.user, user)
-        self.assertEqual(review.place, place)

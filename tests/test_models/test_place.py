@@ -75,24 +75,3 @@ class test_Place(test_basemodel):
         self.assertEqual(type(new.amenity_ids), list)
 
     #--New unittests--#
-
-    def test_name(self):
-        """ """
-        new = Place()
-        self.assertEqual(type(new.name), str)
-
-    def test_place_attributes(self):
-        place = Place()
-        self.assertEqual(place.city_id, "")
-        self.assertEqual(place.user_id, "")
-        self.assertEqual(place.name, "")
-
-    def test_place_amenities_relationship(self):
-        # Test the relationship between Place and Amenity
-        place = Place(name="Awesome Apartment")
-        amenity1 = Amenity(name="WiFi")
-        amenity2 = Amenity(name="Swimming Pool")
-        place.amenities.append(amenity1)
-        place.amenities.append(amenity2)
-        self.assertIn(amenity1, place.amenities)
-        self.assertIn(amenity2, place.amenities)

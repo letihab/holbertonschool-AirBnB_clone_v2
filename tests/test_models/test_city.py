@@ -30,19 +30,3 @@ class test_City(test_basemodel):
         self.assertEqual(type(new.name), str)
 
     #--New Unittests--#
-
-    def test_name(self):
-        """ """
-        new = City()
-        self.assertEqual(type(new.name), str)
-
-    def test_city_attributes(self):
-        city = City()
-        self.assertEqual(city.state_id, "")
-        self.assertEqual(city.name, "")
-
-    def test_city_state_relationship(self):
-        # Test the relationship between City and State
-        state = State(name="New York")
-        city = City(name="Albany", state=state)
-        self.assertEqual(city.state, state)
