@@ -253,3 +253,75 @@ class test_fileStorage(unittest.TestCase):
         self.storage.new(model)
         key = model.__class__.__name__ + "." + model.id
         self.assertIn(key, self.storage.all())
+
+    #--New unittests--#
+
+    def test_all_with_class_filter(self):
+        """Test all method with class filter"""
+        new_user = User()
+        new_city = City()
+        new_state = State()
+        self.storage.new(new_user)
+        self.storage.new(new_city)
+        self.storage.new(new_state)
+
+        filtered_objects_user = self.storage.all(cls=User)
+        self.assertEqual(len(filtered_objects_user), 1)
+        self.assertIn("User.{}".format(new_user.id), filtered_objects_user)
+
+        filtered_objects_city = self.storage.all(cls=City)
+        self.assertEqual(len(filtered_objects_city), 1)
+        self.assertIn("City.{}".format(new_city.id), filtered_objects_city)
+
+        filtered_objects_state = self.storage.all(cls=State)
+        self.assertEqual(len(filtered_objects_state), 1)
+        self.assertIn("State.{}".format(new_state.id), filtered_objects_state)
+
+    def test_new(self):
+        """Test new method"""
+        new_user = User()
+        self.storage.new(new_user)
+        key = "User.{}".format(new_user.id)
+        self.assertIn(key, self.storage.all())
+
+    def test_save_reload(self):
+        """Test save and reload methods"""
+        new_user = User()
+        self.storage.new(new_user)
+        self.storage.save()
+
+        loaded_storage = FileStorage()
+        loaded_storage.reload()
+
+        key = "User.{}".format(new_user.id)
+        self.assertEqual(loaded_storage.all()[key].to_dict(),
+                         new_user.to_dict())
+
+    def test_delete(self):
+        """Test delete method"""
+        new_user = User()
+        self.storage.new(new_user)
+        key = "User.{}".format(new_user.id)
+        self.assertIn(key, self.storage.all())
+
+        self.storage.delete(new_user)
+        self.assertNotIn(key, self.storage.all())
+
+    def test_delete_nonexistent(self):
+        """Test delete method with nonexistent object"""
+        new_user = User()
+        key = "User.{}".format(new_user.id)
+        self.assertNotIn(key, self.storage.all())
+
+        self.storage.delete(new_user)
+        self.assertNotIn(key, self.storage.all())
+
+    def test_close(self):
+        """Test close method"""
+        self.storage.close()
+        self.assertEqual(len(self.storage.all()), 0)
+
+        # Confirm reloading after close
+        loaded_storage = FileStorage()
+        loaded_storage.reload()
+        self.assertEqual(len(loaded_storage.all()), 0)
