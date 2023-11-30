@@ -14,5 +14,5 @@ class Amenity(BaseModel, Base):
     id = Column(Integer, primary_key=True)
 
     name = Column(String(128), nullable=False)
-    places = relationship('Place', secondary='place_amenity_association',
-                          back_populates='amenities')
+    """places = relationship('Place', secondary='place_amenity_association',
+                          back_populates='amenities')"""

@@ -9,10 +9,10 @@ from os import getenv
 from models.amenity import Amenity
 
 
-# Définir la table d'association pour la relation many-to-many
+"""# Définir la table d'association pour la relation many-to-many
 place_amenity_association = Table('place_amenity', Base.metadata,
     Column('place_id', String(60), ForeignKey('places.id'), primary_key=True),
-    Column('amenity_id', Integer, ForeignKey('amenities.id'), primary_key=True))
+    Column('amenity_id', Integer, ForeignKey('amenities.id'), primary_key=True))"""
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -31,7 +31,7 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
 
-    user = relationship('User', back_populates='places')
+    """user = relationship('User', back_populates='places')
 
     # For DBStorage
     if getenv('HBNB_TYPE_STORAGE') == 'db':
@@ -41,24 +41,24 @@ class Place(BaseModel, Base):
 
     # For FileStorage
     else:
-        amenity_ids = []
+    amenity_ids = []
 
-        @property
-        def amenities(self):
-            """Getter attribute for amenities in FileStorage"""
+    @property
+    def amenities(self):
 
-            from models import storage
-            amenity_instances = []
-            for amenity_id in self.amenity_ids:
-                amenity = storage.get('Amenity', amenity_id)
-                if amenity:
-                    amenity_instances.append(amenity)
-            return amenity_instances
 
-        @amenities.setter
-        def amenities(self, amenity_obj):
-            """Setter attribute for amenities in FileStorage"""
+        from models import storage
+        amenity_instances = []
+        for amenity_id in self.amenity_ids:
+            amenity = storage.get('Amenity', amenity_id)
+            if amenity:
+                amenity_instances.append(amenity)
+        return amenity_instances
 
-            if isinstance(amenity_obj, Amenity):
-                self.amenity_ids.append(amenity_obj.id)
-                self.save()
+    @amenities.setter
+    def amenities(self, amenity_obj):
+
+
+        if isinstance(amenity_obj, Amenity):
+            self.amenity_ids.append(amenity_obj.id)
+            self.save()"""
