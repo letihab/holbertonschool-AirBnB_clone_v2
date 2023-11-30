@@ -116,7 +116,7 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, args):
         """Create an object of any class"""
         pline = args.split()
-        if not pline:
+        if pline == []:
             print("** class name missing **")
             return
         elif pline[0] not in HBNBCommand.classes:
