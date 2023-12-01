@@ -57,6 +57,21 @@ class TestDBStorage(unittest.TestCase):
         self.db_storage.new(state)
         self.assertIn(state, self.db_storage._DBStorage__session.new)
 
+    def test_reload(self):
+        """Test reload() recreates the session and tables"""
+        state = State(name="California")
+        self.db_storage.new(state)
+        self.db_storage.save()
+        self.db_storage.reload()
+        all_states = self.db_storage.all(State)
+        self.assertEqual(len(all_states), 0)
+
+    def test_close(self):
+        """Test close() method"""
+        self.db_storage.close()
+        with self.assertRaises(Exception):
+            self.db_storage.all()  
+
 class TestFileStorage(unittest.TestCase):
     """filestorage class"""
     @unittest.skipIf(storage_t != 'db', "not testing db storage")
@@ -75,3 +90,28 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    class TestDBStorageDocs(unittest.TestCase):
+        """Tests to check the documentation and style of DBStorage class"""
+    @classmethod
+    def setUpClass(cls):
+        """Set up for the doc tests"""
+        cls.dbs_f = inspect.getmembers(DBStorage, inspect.isfunction)
+
+    def test_pep8_conformance_db_storage(self):
+        """Test that models/engine/db_storage.py conforms to PEP8."""
+        pep8s = pycodestyle.StyleGuide(quiet=True)
+        result = pep8s.check_files(['models/engine/db_storage.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
+
+    def test_pep8_conformance_test_db_storage(self):
+        """Test tests/test_models/test_db_storage.py conforms to PEP8."""
+        pep8s = pycodestyle.StyleGuide(quiet=True)
+        result = pep8s.check_files(['tests/test_models/test_engine/\
+test_db_storage.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
+
+if __name__ == '__main__':
+    unittest.main()
