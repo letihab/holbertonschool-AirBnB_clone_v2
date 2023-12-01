@@ -70,7 +70,8 @@ class TestDBStorage(unittest.TestCase):
         """Test close() method"""
         self.db_storage.close()
         with self.assertRaises(Exception):
-            self.db_storage.all()  
+            self.db_storage.all()
+
 
 class TestFileStorage(unittest.TestCase):
     """filestorage class"""
@@ -112,6 +113,7 @@ class TestFileStorage(unittest.TestCase):
 test_db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
+
 
 if __name__ == '__main__':
     unittest.main()
