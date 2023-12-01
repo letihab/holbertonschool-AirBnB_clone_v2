@@ -146,7 +146,3 @@ class TestDBStorage(unittest.TestCase):
         storage.reload()
         updated_review = storage.all(Review)[0]
         self.assertEqual(updated_review.text, "Updated review text")
-
-
-if __name__ == '__main__':
-    unittest.main()
