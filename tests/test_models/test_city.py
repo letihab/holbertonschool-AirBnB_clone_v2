@@ -199,3 +199,93 @@ class test_City(test_basemodel):
         self.assertTrue(hasattr(self.city, 'delete'))
         self.city.delete()
         mock_storage.delete.assert_called_once_with(self.city)
+
+    """ new """
+
+    @classmethod
+    def setUpClass(cls):
+        """Class method to open test's environment"""
+        cls.city = City()
+        try:
+            os.rename("file.json", "test_file.json")
+        except Exception:
+            pass
+
+    @classmethod
+    def tearDownClass(cls):
+        """Class method to close test's environment"""
+        try:
+            os.remove("file.json")
+            os.rename("test_file.json", "file.json")
+        except Exception:
+            pass
+
+    def setUp(self):
+        """Set up the testing environment"""
+        self.city = City()
+
+    def tearDown(self):
+        """Tear down the testing environment"""
+        storage.close()
+
+    def test_save_method(self):
+        """Test case for 'save' method"""
+        datetime_prev = self.city.updated_at
+        self.city.save()
+        self.assertGreater(self.city.updated_at, datetime_prev)
+        self.assertTrue(os.path.exists("file.json"))
+
+    def test_str_method(self):
+        """Test case for str instance representation"""
+        cls_name = str(self.city.__class__.__name__)
+        obj_dict = str(self.city.__dict__)
+        obj_str = "[{}] ({}) {}".format(cls_name, self.city.id, obj_dict)
+        self.assertEqual(obj_str, self.city.__str__())
+
+    def test_to_dict_method(self):
+        """Test case for 'to_dict' method"""
+        model_dict = {
+            "id": self.city.id,
+            "__class__": self.city.__class__.__name__,
+            "created_at": self.city.created_at.isoformat(),
+            "updated_at": self.city.updated_at.isoformat()
+        }
+        self.assertDictEqual(model_dict, self.city.to_dict())
+
+    def test_instance_creation(self):
+        obj = City()
+        self.assertIsInstance(obj, City)
+
+    def test_str_representation(self):
+        obj = City()
+        obj_str = str(obj)
+        self.assertTrue("[City]" in obj_str)
+        self.assertTrue(obj.id in obj_str)
+
+    def test_to_dict_method(self):
+        obj = City()
+        obj_dict = obj.to_dict()
+        self.assertIsInstance(obj_dict, dict)
+        self.assertEqual(obj_dict['__class__'], 'City')
+        self.assertTrue('created_at' in obj_dict)
+        self.assertTrue('updated_at' in obj_dict)
+
+    # Add the rest of the tests from the original test_City class here
+
+    @patch('models.storage')
+    def test_city_save_method(self, mock_storage):
+        """Test if City has a 'save' method"""
+        self.assertTrue(hasattr(self.city, 'save'))
+        self.city.save()
+        mock_storage.new.assert_called_once_with(self.city)
+        mock_storage.save.assert_called_once()
+
+    @patch('models.storage')
+    def test_city_delete_method(self, mock_storage):
+        """Test if City has a 'delete' method"""
+        self.assertTrue(hasattr(self.city, 'delete'))
+        self.city.delete()
+        mock_storage.delete.assert_called_once_with(self.city)
+
+if __name__ == "__main__":
+    test_basemodel.main()

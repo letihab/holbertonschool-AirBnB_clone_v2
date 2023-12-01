@@ -7,6 +7,7 @@ from models.place import Place
 from models.review import Review
 from models.amenity import Amenity
 from models import storage
+from models.engine.db_storage import DBStorage
 
 
 class TestDBStorage(unittest.TestCase):
@@ -146,3 +147,31 @@ class TestDBStorage(unittest.TestCase):
         storage.reload()
         updated_review = storage.all(Review)[0]
         self.assertEqual(updated_review.text, "Updated review text")
+
+    """new"""
+
+    def test_doc(self):
+        """
+        Check all the doc of the DBStorage Class
+        """
+        # module documentation
+        module = len(DBStorage.__doc__)
+        self.assertGreater(module, 0)
+
+        # class documentation
+        class_doc = len(DBStorage.__init__.__doc__)
+        self.assertGreater(class_doc, 0)
+
+        method_docs = [
+            DBStorage.new.__doc__,
+            DBStorage.save.__doc__,
+            DBStorage.delete.__doc__,
+            DBStorage.reload.__doc__,
+            DBStorage.all.__doc__
+        ]
+
+        for method_doc in method_docs:
+            self.assertGreater(len(method_doc), 0)
+
+if __name__ == '__main__':
+    unittest.main()

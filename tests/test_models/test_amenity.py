@@ -158,3 +158,5 @@ class test_Amenity(test_basemodel):
         self.assertTrue(hasattr(amenity, 'place_amenities'))
         self.assertIsInstance(amenity.place_amenities, InstrumentedList)
 
+if __name__ == "__main__":
+    test_basemodel.main()
