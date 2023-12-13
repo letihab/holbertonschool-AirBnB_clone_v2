@@ -6,6 +6,7 @@ from flask import render_template
 from models.state import State
 from models.city import City
 
+
 app = Flask(__name__)
 
 

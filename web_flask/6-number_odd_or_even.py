@@ -5,18 +5,23 @@ import html
 
 
 app = Flask(__name__)
+
+
 @app.route('/', strict_slashes=False)
 def hello_hbnb():
     return 'Hello HBNB!'
+
 
 @app.route('/hbnb', strict_slashes=False)
 def Display_hbnb():
     return "HBNB"
 
+
 @app.route('/c/<text>', strict_slashes=False)
 def Display_C(text):
     text.replace("_", " ")
     return "c {}".format(text)
+
 
 @app.route('/python/<text>', strict_slashes=False)
 @app.route('/python/', strict_slashes=False)
@@ -29,17 +34,24 @@ def Display_python(text='is cool'):
 def display_number(n):
     return '{} is a number'.format(html.escape(str(n)))
 
+
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def display_number_template(n):
     if isinstance(n, int):
-        return render_template_string('<html><body><h1>Number: {{ num }}</h1></body></html>', num=n)
+        return render_template_string(
+            '<html><body><h1>Number: {{ num }}</h1></body></html>',
+            num=n
+        )
+
 
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
 def display_number_odd_or_even(n):
     if isinstance(n, int):
         parity = 'even' if n % 2 == 0 else 'odd'
-        return render_template_string('<html><body><h1>Number: {{ num }} is {{ parity }}</h1></body></html>',
-                                      num=n, parity=parity)
+        return render_template_string(
+            '<html><body><h1>Number: {{ num }} is {{ parity }}</h1></body></html>',
+            num=n, parity=parity
+        )
 
 
 if __name__ == '__main__':
