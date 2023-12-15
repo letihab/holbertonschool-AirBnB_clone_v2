@@ -9,7 +9,7 @@ from os import getenv
 
 
 class DBStorage:
-    """claas storage database"""
+    """class storage database"""
     __engine = None
     __session = None
 
