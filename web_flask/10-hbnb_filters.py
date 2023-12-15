@@ -1,9 +1,8 @@
 #!/usr/bin/python3
+"""start flask web framework"""
 from models import storage
 from flask import Flask, render_template
-from markupsafe import escape
 from models.state import State
-from models.city import City
 from models.amenity import Amenity
 
 
@@ -34,8 +33,6 @@ def states():
 @app.route("/states/<id>", strict_slashes=False)
 def state_by_id(id):
     state = None
-
-    # Use query to get the State object by ID
     for s in storage.all(State).values():
         if s.id == id:
             state = s
@@ -55,5 +52,4 @@ def teardown_appcontext(exception):
 
 
 if __name__ == '__main__':
-    # Run the application on 0.0.0.0, port 5000
     app.run(host='0.0.0.0', port=5000)
