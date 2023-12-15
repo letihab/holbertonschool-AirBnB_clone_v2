@@ -2,14 +2,11 @@
 """class State that inherits from BaseModel"""
 
 
-from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String
-import models
+from sqlalchemy import Column, String
 from os import getenv
 from models.city import City
-import shlex
 
 
 class State(BaseModel, Base):
@@ -22,15 +19,15 @@ class State(BaseModel, Base):
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         cities = relationship("City", cascade="all, delete, delete-orphan", backref="state",
                               passive_deletes=True)
-    else:
-        @property
-        def get_cities(self):
-            """Return the list of City instances with state_id
-            equals to the current State.id"""
-            from models import storage
-            state_cities = []
-            all_cities = storage.all(City)
-            for city in all_cities.values():
-                if city.state_id == self.id:
-                    state_cities.append(city)
+
+    @property
+    def get_cities(self):
+        """Return the list of City instances with state_id
+        equals to the current State.id"""
+        from models import storage
+        state_cities = []
+        all_cities = storage.all(City)
+        for city in all_cities.values():
+            if city.state_id == self.id:
+                state_cities.append(city)
             return state_cities
