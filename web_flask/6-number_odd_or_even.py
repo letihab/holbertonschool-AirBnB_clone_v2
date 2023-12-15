@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """script that start a Flask web application"""
-from flask import Flask, render_template_string
+from flask import Flask, render_template
 import html
 
 
@@ -35,23 +35,16 @@ def display_number(n):
     return '{} is a number'.format(html.escape(str(n)))
 
 
-@app.route('/number_template/<int:n>', strict_slashes=False)
-def display_number_template(n):
-    if isinstance(n, int):
-        return render_template_string(
-            '<html><body><h1>Number: {{ num }}</h1></body></html>',
-            num=n
-        )
+@app.route("/number_template/<int:n>", strict_slashes=False)
+def display_HTML_page(n):
+    """  display a HTML page only if n is an integer """
+    return render_template('5-number.html', n=n)
 
 
-@app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
-def display_number_odd_or_even(n):
-    if isinstance(n, int):
-        parity = 'even' if n % 2 == 0 else 'odd'
-        return render_template_string(
-            '<html><body><h1>Number: {{ num }} is {{ parity }}</h1></body></html>',
-            num=n, parity=parity
-        )
+@app.route("/number_odd_or_even/<int:n>", strict_slashes=False)
+def display_(n):
+    """ display a HTML page only if n is an integer """
+    return render_template('6-number_odd_or_even.html', n=n)
 
 
 if __name__ == '__main__':
